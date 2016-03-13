@@ -311,45 +311,105 @@ class SWCMainController : NSObject {
     
     
     // MARK: Color String Parsing
-    func rangeCheckForColorMatch(range1: NSRange, _ range2: NSRange) -> Bool {
-        return range1.location >= range2.location
-            && NSMaxRange(range1) <= NSMaxRange(range2)
+    func colorCodeMatch(text: String, rx: NSRegularExpression, selectedRange: NSRange, handler: (result: NSTextCheckingResult, colorRange: NSRange, stop: UnsafeMutablePointer<ObjCBool>) -> ()) {
+        let textRange = NSMakeRange(0, text.characters.count)
+        let matchingOption = NSMatchingOptions.init(rawValue: 0)
+        rx.enumerateMatchesInString(text, options: matchingOption, range: textRange) { (checkResult, flags, stop) in
+            guard let result = checkResult else {
+                stop.memory = true
+                return
+            }
+            let colorRange = result.range
+            guard colorRange.location != NSNotFound else {
+                stop.memory = true
+                return
+            }
+            if selectedRange.location >= colorRange.location
+                && NSMaxRange(selectedRange) <= NSMaxRange(colorRange) {
+                handler(result: result, colorRange: colorRange, stop: stop)
+            }
+        }
     }
     
     func color(text text: NSString, selectedRange: NSRange, inout type: SWCColorType, inout matchedRange: NSRange) -> NSColor? {
         var foundColor : NSColor? = nil
         var foundColorRange = NSMakeRange(NSNotFound, 0)
         var foundColorType = SWCColorType.None
-        let textRange = NSMakeRange(0, text.length)
-        let matchingOption = NSMatchingOptions.init(rawValue: 0)
+        let string = String(text)
+        self.colorCodeMatch(string, rx: self.rgbaUIColorRegex, selectedRange: selectedRange) { [unowned self] (result, colorRange, stop) -> () in
+            let hasInit = result.rangeAtIndex(1).location != NSNotFound
+            var red = Double(text.substringWithRange(result.rangeAtIndex(2)))
+            red = self.dividedValue(red!, divisorRange: result.rangeAtIndex(3), inString: text)
+            var green = Double(text.substringWithRange(result.rangeAtIndex(4)))
+            green = self.dividedValue(green!, divisorRange: result.rangeAtIndex(5), inString: text)
+            var blue = Double(text.substringWithRange(result.rangeAtIndex(6)))
+            blue = self.dividedValue(blue!, divisorRange: result.rangeAtIndex(7), inString: text)
+            var alpha = Double(text.substringWithRange(result.rangeAtIndex(8)))
+            alpha = self.dividedValue(alpha!, divisorRange: result.rangeAtIndex(9), inString: text)
+            let c = SWC_RGBA.init(r: red!, g: green!, b: blue!, a: alpha!)
+            foundColor = NSColor.init(calibratedRed: c.r, green: c.g, blue: c.b, alpha: c.a)
+            if hasInit {
+                foundColorType = .UIRGBAInit
+            }
+            else {
+                foundColorType = .UIRGBA
+            }
+            foundColorRange = colorRange
+            stop.memory = true
+        }
         
-        self.rgbaUIColorRegex.enumerateMatchesInString(String(text), options: matchingOption, range: textRange) { [unowned self] (result, flags, stop) in
-            guard let res = result else {
+        if foundColor == nil {
+            self.colorCodeMatch(string, rx: self.whiteUIColorRegex, selectedRange: selectedRange) { [unowned self] (result, colorRange, stop) -> () in
+                let hasInit = result.rangeAtIndex(1).location != NSNotFound
+                var white = Double(text.substringWithRange(result.rangeAtIndex(2)))
+                white = self.dividedValue(white!, divisorRange: result.rangeAtIndex(3), inString: text)
+                var alpha = Double(text.substringWithRange(result.rangeAtIndex(4)))
+                alpha = self.dividedValue(alpha!, divisorRange: result.rangeAtIndex(5), inString: text)
+                foundColor = NSColor(white: CGFloat(white!), alpha: CGFloat(alpha!))
+                foundColorType = hasInit ? .UIWhiteInit : .UIWhite
+                foundColorRange = colorRange
                 stop.memory = true
-                return
             }
-            let colorRange = res.range
-            guard colorRange.location != NSNotFound else {
+        }
+        
+        if foundColor == nil {
+            self.colorCodeMatch(string, rx: self.constantColorRegex, selectedRange: selectedRange) { [unowned self] (result, colorRange, stop) -> () in
+                let NS_UI = text.substringWithRange(result.rangeAtIndex(1))
+                let colorName = text.substringWithRange(result.rangeAtIndex(2))
+                foundColor = self.constantColorsByName[colorName]
+                foundColorRange = colorRange
+                foundColorType = NS_UI.hasPrefix("UI") ? .UIConstant : .NSConstant
                 stop.memory = true
-                return
             }
-            if self.rangeCheckForColorMatch(selectedRange, colorRange) {
-                let hasInit = res.rangeAtIndex(1).location != NSNotFound
-                var red = Double(text.substringWithRange(res.rangeAtIndex(2)))
-                red = self.dividedValue(red!, divisorRange: res.rangeAtIndex(3), inString: text)
-                var green = Double(text.substringWithRange(res.rangeAtIndex(4)))
-                green = self.dividedValue(green!, divisorRange: res.rangeAtIndex(5), inString: text)
-                var blue = Double(text.substringWithRange(res.rangeAtIndex(6)))
-                blue = self.dividedValue(blue!, divisorRange: res.rangeAtIndex(7), inString: text)
-                var alpha = Double(text.substringWithRange(res.rangeAtIndex(8)))
-                alpha = self.dividedValue(alpha!, divisorRange: res.rangeAtIndex(9), inString: text)
+        }
+        
+        if foundColor == nil {
+            self.colorCodeMatch(string, rx: self.rgbaNSColorRegex, selectedRange: selectedRange) { [unowned self] (result, colorRange, stop) -> () in
+                let hasInit = result.rangeAtIndex(1).location != NSNotFound
+                let foundPrefix = result.rangeAtIndex(2).location != NSNotFound
+                var red = Double(text.substringWithRange(result.rangeAtIndex(3)))
+                red = self.dividedValue(red!, divisorRange: result.rangeAtIndex(4), inString: text)
+                var green = Double(text.substringWithRange(result.rangeAtIndex(5)))
+                green = self.dividedValue(green!, divisorRange: result.rangeAtIndex(6), inString: text)
+                var blue = Double(text.substringWithRange(result.rangeAtIndex(7)))
+                blue = self.dividedValue(blue!, divisorRange: result.rangeAtIndex(8), inString: text)
+                var alpha = Double(text.substringWithRange(result.rangeAtIndex(9)))
+                alpha = self.dividedValue(alpha!, divisorRange: result.rangeAtIndex(10), inString: text)
                 let c = SWC_RGBA.init(r: red!, g: green!, b: blue!, a: alpha!)
-                foundColor = NSColor.init(calibratedRed: c.r, green: c.g, blue: c.b, alpha: c.a)
-                if hasInit {
-                    foundColorType = .UIRGBAInit
+                if foundPrefix {
+                    let prefixString = text.substringWithRange(result.rangeAtIndex(2))
+                    if prefixString.hasPrefix("calibrated") {
+                        foundColor = NSColor.init(calibratedRed: c.r, green: c.g, blue: c.b, alpha: c.a)
+                        foundColorType = hasInit ? .NSRGBACalibratedInit : .NSRGBACalibrated
+                    }
+                    else {
+                        foundColor = NSColor.init(deviceRed: c.r, green: c.g, blue: c.b, alpha: c.a)
+                        foundColorType = hasInit ? .NSRGBADeviceInit : .NSRGBADevice
+                    }
                 }
                 else {
-                    foundColorType = .UIRGBA
+                    foundColor = NSColor.init(red: c.r, green: c.g, blue: c.b, alpha: c.a)
+                    foundColorType = hasInit ? .NSRGBAInit : .NSRGBA
                 }
                 foundColorRange = colorRange
                 stop.memory = true
@@ -357,134 +417,30 @@ class SWCMainController : NSObject {
         }
         
         if foundColor == nil {
-            self.whiteUIColorRegex.enumerateMatchesInString(String(text), options: matchingOption, range: textRange) { (result, flags, stop) in
-                guard let res = result else {
-                    stop.memory = true
-                    return
+            self.colorCodeMatch(string, rx: self.whiteNSColorRegex, selectedRange: selectedRange) { [unowned self] (result, colorRange, stop) -> () in
+                let hasInit = result.rangeAtIndex(1).location != NSNotFound
+                let hasPrefix = result.rangeAtIndex(2).location != NSNotFound
+                var white = Double(text.substringWithRange(result.rangeAtIndex(3)))
+                white = self.dividedValue(white!, divisorRange: result.rangeAtIndex(4), inString: text)
+                var alpha = Double(text.substringWithRange(result.rangeAtIndex(5)))
+                alpha = self.dividedValue(alpha!, divisorRange: result.rangeAtIndex(6), inString: text)
+                if hasPrefix {
+                    let prefixString = text.substringWithRange(result.rangeAtIndex(2))
+                    if prefixString.hasPrefix("calibrated") {
+                        foundColor = NSColor(calibratedWhite: CGFloat(white!), alpha: CGFloat(alpha!))
+                        foundColorType = hasInit ? .NSWhiteCalibratedInit : .NSWhiteCalibrated
+                    }
+                    else {
+                        foundColor = NSColor(deviceWhite: CGFloat(white!), alpha: CGFloat(alpha!))
+                        foundColorType = hasInit ? .NSWhiteDeviceInit : .NSWhiteDevice
+                    }
                 }
-                let colorRange = res.range
-                guard colorRange.location != NSNotFound else {
-                    stop.memory = true
-                    return
-                }
-                if self.rangeCheckForColorMatch(selectedRange, colorRange) {
-                    let hasInit = res.rangeAtIndex(1).location != NSNotFound
-                    var white = Double(text.substringWithRange(res.rangeAtIndex(2)))
-                    white = self.dividedValue(white!, divisorRange: res.rangeAtIndex(3), inString: text)
-                    var alpha = Double(text.substringWithRange(res.rangeAtIndex(4)))
-                    alpha = self.dividedValue(alpha!, divisorRange: res.rangeAtIndex(5), inString: text)
+                else {
                     foundColor = NSColor(white: CGFloat(white!), alpha: CGFloat(alpha!))
-                    foundColorType = hasInit ? .UIWhiteInit : .UIWhite
-                    foundColorRange = colorRange
-                    stop.memory = true
+                    foundColorType = hasInit ? .NSWhiteInit : .NSWhite
                 }
-            }
-        }
-        
-        if foundColor == nil {
-            self.constantColorRegex.enumerateMatchesInString(String(text), options: matchingOption, range: textRange) { [unowned self] (result, flags, stop) in
-                guard let res = result else {
-                    stop.memory = true
-                    return
-                }
-                let colorRange = res.range
-                guard colorRange.location != NSNotFound else {
-                    stop.memory = true
-                    return
-                }
-                if self.rangeCheckForColorMatch(selectedRange, colorRange) {
-                    let NS_UI = text.substringWithRange(res.rangeAtIndex(1))
-                    let colorName = text.substringWithRange(res.rangeAtIndex(2))
-                    foundColor = self.constantColorsByName[colorName]
-                    foundColorRange = colorRange
-                    foundColorType = NS_UI.hasPrefix("UI") ? .UIConstant : .NSConstant
-                    stop.memory = true
-                }
-            }
-        }
-        
-        if foundColor == nil {
-            self.rgbaNSColorRegex.enumerateMatchesInString(String(text), options: matchingOption, range: textRange) { [unowned self] (result, flags, stop) in
-                guard let res = result else {
-                    stop.memory = true
-                    return
-                }
-                let colorRange = res.range
-                guard colorRange.location != NSNotFound else {
-                    stop.memory = true
-                    return
-                }
-                if self.rangeCheckForColorMatch(selectedRange, colorRange) {
-                    let hasInit = res.rangeAtIndex(1).location != NSNotFound
-                    let foundPrefix = res.rangeAtIndex(2).location != NSNotFound
-                    var red = Double(text.substringWithRange(res.rangeAtIndex(3)))
-                    red = self.dividedValue(red!, divisorRange: res.rangeAtIndex(4), inString: text)
-                    var green = Double(text.substringWithRange(res.rangeAtIndex(5)))
-                    green = self.dividedValue(green!, divisorRange: res.rangeAtIndex(6), inString: text)
-                    var blue = Double(text.substringWithRange(res.rangeAtIndex(7)))
-                    blue = self.dividedValue(blue!, divisorRange: res.rangeAtIndex(8), inString: text)
-                    var alpha = Double(text.substringWithRange(res.rangeAtIndex(9)))
-                    alpha = self.dividedValue(alpha!, divisorRange: res.rangeAtIndex(10), inString: text)
-                    let c = SWC_RGBA.init(r: red!, g: green!, b: blue!, a: alpha!)
-                    if foundPrefix {
-                        let prefixString = text.substringWithRange(res.rangeAtIndex(2))
-                        if prefixString.hasPrefix("calibrated") {
-                            foundColor = NSColor.init(calibratedRed: c.r, green: c.g, blue: c.b, alpha: c.a)
-                            foundColorType = hasInit ? .NSRGBACalibratedInit : .NSRGBACalibrated
-                        }
-                        else {
-                            foundColor = NSColor.init(deviceRed: c.r, green: c.g, blue: c.b, alpha: c.a)
-                            foundColorType = hasInit ? .NSRGBADeviceInit : .NSRGBADevice
-                        }
-                    }
-                    else {
-                        foundColor = NSColor.init(red: c.r, green: c.g, blue: c.b, alpha: c.a)
-                        foundColorType = hasInit ? .NSRGBAInit : .NSRGBA
-                    }
-                    
-                    foundColorRange = colorRange
-                    
-                    stop.memory = true
-                }
-            }
-        }
-        
-        if foundColor == nil {
-            self.whiteNSColorRegex.enumerateMatchesInString(String(text), options: matchingOption, range: textRange) { (result, flags, stop) in
-                guard let res = result else {
-                    stop.memory = true
-                    return
-                }
-                let colorRange = res.range
-                guard colorRange.location != NSNotFound else {
-                    stop.memory = true
-                    return
-                }
-                if self.rangeCheckForColorMatch(selectedRange, colorRange) {
-                    let hasInit = res.rangeAtIndex(1).location != NSNotFound
-                    let hasPrefix = res.rangeAtIndex(2).location != NSNotFound
-                    var white = Double(text.substringWithRange(res.rangeAtIndex(3)))
-                    white = self.dividedValue(white!, divisorRange: res.rangeAtIndex(4), inString: text)
-                    var alpha = Double(text.substringWithRange(res.rangeAtIndex(5)))
-                    alpha = self.dividedValue(alpha!, divisorRange: res.rangeAtIndex(6), inString: text)
-                    if hasPrefix {
-                        let prefixString = text.substringWithRange(res.rangeAtIndex(2))
-                        if prefixString.hasPrefix("calibrated") {
-                            foundColor = NSColor(calibratedWhite: CGFloat(white!), alpha: CGFloat(alpha!))
-                            foundColorType = hasInit ? .NSWhiteCalibratedInit : .NSWhiteCalibrated
-                        }
-                        else {
-                            foundColor = NSColor(deviceWhite: CGFloat(white!), alpha: CGFloat(alpha!))
-                            foundColorType = hasInit ? .NSWhiteDeviceInit : .NSWhiteDevice
-                        }
-                    }
-                    else {
-                        foundColor = NSColor(white: CGFloat(white!), alpha: CGFloat(alpha!))
-                        foundColorType = hasInit ? .NSWhiteInit : .NSWhite
-                    }
-                    foundColorRange = colorRange
-                    stop.memory = true
-                }
+                foundColorRange = colorRange
+                stop.memory = true
             }
         }
         
