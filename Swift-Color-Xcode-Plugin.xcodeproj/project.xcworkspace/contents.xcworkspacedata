@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:ColorO-Plugin.xcodeproj">
+      location = "self:Swift-Color-Xcode-Plugin.xcodeproj">
    </FileRef>
 </Workspace>

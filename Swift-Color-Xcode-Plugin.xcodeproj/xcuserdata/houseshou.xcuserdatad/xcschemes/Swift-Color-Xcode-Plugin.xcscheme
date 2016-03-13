@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5E3F2C081C946ECA001DD542"
-               BuildableName = "ColorO-Plugin.xcplugin"
-               BlueprintName = "ColorO-Plugin"
-               ReferencedContainer = "container:ColorO-Plugin.xcodeproj">
+               BuildableName = "Swift-Color-Xcode-Plugin.xcplugin"
+               BlueprintName = "Swift-Color-Xcode-Plugin"
+               ReferencedContainer = "container:Swift-Color-Xcode-Plugin.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -46,9 +46,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5E3F2C081C946ECA001DD542"
-            BuildableName = "ColorO-Plugin.xcplugin"
-            BlueprintName = "ColorO-Plugin"
-            ReferencedContainer = "container:ColorO-Plugin.xcodeproj">
+            BuildableName = "Swift-Color-Xcode-Plugin.xcplugin"
+            BlueprintName = "Swift-Color-Xcode-Plugin"
+            ReferencedContainer = "container:Swift-Color-Xcode-Plugin.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -64,9 +64,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5E3F2C081C946ECA001DD542"
-            BuildableName = "ColorO-Plugin.xcplugin"
-            BlueprintName = "ColorO-Plugin"
-            ReferencedContainer = "container:ColorO-Plugin.xcodeproj">
+            BuildableName = "Swift-Color-Xcode-Plugin.xcplugin"
+            BlueprintName = "Swift-Color-Xcode-Plugin"
+            ReferencedContainer = "container:Swift-Color-Xcode-Plugin.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

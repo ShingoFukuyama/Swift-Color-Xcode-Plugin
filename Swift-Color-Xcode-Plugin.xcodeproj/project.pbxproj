@@ -6,9 +6,19 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		5E3A5AF51C959C8500D93440 /* COPPlainColorWell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3A5AF41C959C8500D93440 /* COPPlainColorWell.swift */; };
+		5E3F2C141C94736C001DD542 /* SWCMainController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3F2C131C94736C001DD542 /* SWCMainController.swift */; };
+		5EFCCCB71C94877500935E68 /* SWCColorFrameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EFCCCB61C94877500935E68 /* SWCColorFrameView.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
-		5E3F2C091C946ECA001DD542 /* ColorO-Plugin.xcplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ColorO-Plugin.xcplugin"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5E3A5AF41C959C8500D93440 /* COPPlainColorWell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = COPPlainColorWell.swift; sourceTree = "<group>"; };
+		5E3F2C091C946ECA001DD542 /* Swift-Color-Xcode-Plugin.xcplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Swift-Color-Xcode-Plugin.xcplugin"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E3F2C0C1C946ECA001DD542 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5E3F2C121C94736B001DD542 /* Swift-Color-Xcode-Plugin-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Swift-Color-Xcode-Plugin-Bridging-Header.h"; sourceTree = "<group>"; };
+		5E3F2C131C94736C001DD542 /* SWCMainController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SWCMainController.swift; sourceTree = "<group>"; };
+		5EFCCCB61C94877500935E68 /* SWCColorFrameView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SWCColorFrameView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -25,7 +35,7 @@
 		5E3F2C001C946ECA001DD542 = {
 			isa = PBXGroup;
 			children = (
-				5E3F2C0B1C946ECA001DD542 /* ColorO-Plugin */,
+				5E3F2C0B1C946ECA001DD542 /* Swift-Color-Xcode-Plugin */,
 				5E3F2C0A1C946ECA001DD542 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -33,25 +43,29 @@
 		5E3F2C0A1C946ECA001DD542 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5E3F2C091C946ECA001DD542 /* ColorO-Plugin.xcplugin */,
+				5E3F2C091C946ECA001DD542 /* Swift-Color-Xcode-Plugin.xcplugin */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		5E3F2C0B1C946ECA001DD542 /* ColorO-Plugin */ = {
+		5E3F2C0B1C946ECA001DD542 /* Swift-Color-Xcode-Plugin */ = {
 			isa = PBXGroup;
 			children = (
 				5E3F2C0C1C946ECA001DD542 /* Info.plist */,
+				5E3F2C131C94736C001DD542 /* SWCMainController.swift */,
+				5EFCCCB61C94877500935E68 /* SWCColorFrameView.swift */,
+				5E3A5AF41C959C8500D93440 /* COPPlainColorWell.swift */,
+				5E3F2C121C94736B001DD542 /* Swift-Color-Xcode-Plugin-Bridging-Header.h */,
 			);
-			path = "ColorO-Plugin";
+			path = "Swift-Color-Xcode-Plugin";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		5E3F2C081C946ECA001DD542 /* ColorO-Plugin */ = {
+		5E3F2C081C946ECA001DD542 /* Swift-Color-Xcode-Plugin */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5E3F2C0F1C946ECA001DD542 /* Build configuration list for PBXNativeTarget "ColorO-Plugin" */;
+			buildConfigurationList = 5E3F2C0F1C946ECA001DD542 /* Build configuration list for PBXNativeTarget "Swift-Color-Xcode-Plugin" */;
 			buildPhases = (
 				5E3F2C051C946ECA001DD542 /* Sources */,
 				5E3F2C061C946ECA001DD542 /* Frameworks */,
@@ -61,9 +75,9 @@
 			);
 			dependencies = (
 			);
-			name = "ColorO-Plugin";
-			productName = "ColorO-Plugin";
-			productReference = 5E3F2C091C946ECA001DD542 /* ColorO-Plugin.xcplugin */;
+			name = "Swift-Color-Xcode-Plugin";
+			productName = "Swift-Color-Xcode-Plugin";
+			productReference = 5E3F2C091C946ECA001DD542 /* Swift-Color-Xcode-Plugin.xcplugin */;
 			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
@@ -80,7 +94,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 5E3F2C041C946ECA001DD542 /* Build configuration list for PBXProject "ColorO-Plugin" */;
+			buildConfigurationList = 5E3F2C041C946ECA001DD542 /* Build configuration list for PBXProject "Swift-Color-Xcode-Plugin" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -92,7 +106,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				5E3F2C081C946ECA001DD542 /* ColorO-Plugin */,
+				5E3F2C081C946ECA001DD542 /* Swift-Color-Xcode-Plugin */,
 			);
 		};
 /* End PBXProject section */
@@ -112,6 +126,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5E3F2C141C94736C001DD542 /* SWCMainController.swift in Sources */,
+				5EFCCCB71C94877500935E68 /* SWCColorFrameView.swift in Sources */,
+				5E3A5AF51C959C8500D93440 /* COPPlainColorWell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -200,12 +217,19 @@
 		5E3F2C101C946ECA001DD542 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = "ColorO-Plugin/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
-				PRODUCT_BUNDLE_IDENTIFIER = "co.fukuyama.plugin.ColorO-Plugin";
+				DEPLOYMENT_LOCATION = YES;
+				DSTROOT = "$(HOME)";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				INFOPLIST_FILE = "Swift-Color-Xcode-Plugin/Info.plist";
+				INSTALL_PATH = "/Library/Application Support/Developer/Shared/Xcode/Plug-ins";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "co.fukuyama.plugin.Swift-Color-Xcode-Plugin";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "Swift-Color-Xcode-Plugin/Swift-Color-Xcode-Plugin-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				WRAPPER_EXTENSION = xcplugin;
 			};
 			name = Debug;
@@ -213,12 +237,18 @@
 		5E3F2C111C946ECA001DD542 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = "ColorO-Plugin/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
-				PRODUCT_BUNDLE_IDENTIFIER = "co.fukuyama.plugin.ColorO-Plugin";
+				DEPLOYMENT_LOCATION = YES;
+				DSTROOT = "$(HOME)";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				INFOPLIST_FILE = "Swift-Color-Xcode-Plugin/Info.plist";
+				INSTALL_PATH = "/Library/Application Support/Developer/Shared/Xcode/Plug-ins";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "co.fukuyama.plugin.Swift-Color-Xcode-Plugin";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "Swift-Color-Xcode-Plugin/Swift-Color-Xcode-Plugin-Bridging-Header.h";
 				WRAPPER_EXTENSION = xcplugin;
 			};
 			name = Release;
@@ -226,7 +256,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		5E3F2C041C946ECA001DD542 /* Build configuration list for PBXProject "ColorO-Plugin" */ = {
+		5E3F2C041C946ECA001DD542 /* Build configuration list for PBXProject "Swift-Color-Xcode-Plugin" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5E3F2C0D1C946ECA001DD542 /* Debug */,
@@ -235,13 +265,14 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5E3F2C0F1C946ECA001DD542 /* Build configuration list for PBXNativeTarget "ColorO-Plugin" */ = {
+		5E3F2C0F1C946ECA001DD542 /* Build configuration list for PBXNativeTarget "Swift-Color-Xcode-Plugin" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5E3F2C101C946ECA001DD542 /* Debug */,
 				5E3F2C111C946ECA001DD542 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
