@@ -20,7 +20,10 @@ private struct SWC_RGBA {
     var b: CGFloat = 1.0
     var a: CGFloat = 1.0
     init(r: Double, g: Double, b: Double, a: Double) {
-        (self.r, self.g, self.b, self.a) = (CGFloat(a), CGFloat(g), CGFloat(b), CGFloat(a))
+        self.r = CGFloat(r)
+        self.g = CGFloat(g)
+        self.b = CGFloat(b)
+        self.a = CGFloat(a)
     }
 }
 
