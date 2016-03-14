@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5E3A5AF51C959C8500D93440 /* COPPlainColorWell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3A5AF41C959C8500D93440 /* COPPlainColorWell.swift */; };
+		5E3A5AF51C959C8500D93440 /* SWCPlainColorWell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3A5AF41C959C8500D93440 /* SWCPlainColorWell.swift */; };
 		5E3F2C141C94736C001DD542 /* SWCMainController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3F2C131C94736C001DD542 /* SWCMainController.swift */; };
 		5EFCCCB71C94877500935E68 /* SWCColorFrameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EFCCCB61C94877500935E68 /* SWCColorFrameView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		5E3A5AF41C959C8500D93440 /* COPPlainColorWell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = COPPlainColorWell.swift; sourceTree = "<group>"; };
+		5E3A5AF41C959C8500D93440 /* SWCPlainColorWell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SWCPlainColorWell.swift; sourceTree = "<group>"; };
 		5E3F2C091C946ECA001DD542 /* Swift-Color-Xcode-Plugin.xcplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Swift-Color-Xcode-Plugin.xcplugin"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E3F2C0C1C946ECA001DD542 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5E3F2C121C94736B001DD542 /* Swift-Color-Xcode-Plugin-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Swift-Color-Xcode-Plugin-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -54,7 +54,7 @@
 				5E3F2C0C1C946ECA001DD542 /* Info.plist */,
 				5E3F2C131C94736C001DD542 /* SWCMainController.swift */,
 				5EFCCCB61C94877500935E68 /* SWCColorFrameView.swift */,
-				5E3A5AF41C959C8500D93440 /* COPPlainColorWell.swift */,
+				5E3A5AF41C959C8500D93440 /* SWCPlainColorWell.swift */,
 				5E3F2C121C94736B001DD542 /* Swift-Color-Xcode-Plugin-Bridging-Header.h */,
 			);
 			path = "Swift-Color-Xcode-Plugin";
@@ -128,7 +128,7 @@
 			files = (
 				5E3F2C141C94736C001DD542 /* SWCMainController.swift in Sources */,
 				5EFCCCB71C94877500935E68 /* SWCColorFrameView.swift in Sources */,
-				5E3A5AF51C959C8500D93440 /* COPPlainColorWell.swift in Sources */,
+				5E3A5AF51C959C8500D93440 /* SWCPlainColorWell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
