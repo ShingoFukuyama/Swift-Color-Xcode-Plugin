@@ -102,36 +102,36 @@ class SWCMainController : NSObject {
     private override init() {
         super.init()
         
-        notificationCenter.addObserver(self, selector: "applicationDidFinishLaunching:", name: NSApplicationDidFinishLaunchingNotification, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(applicationDidFinishLaunching(_:)), name: NSApplicationDidFinishLaunchingNotification, object: nil)
         
         self.colorWell.target = self
-        self.colorWell.action = "colorDidChange:"
+        self.colorWell.action = #selector(colorDidChange(_:))
         
     }
     
     func createMenuItem() {
         if let item = NSApp.mainMenu?.itemWithTitle("Edit"),
             let submenu = item.submenu {
-                submenu.addItem(NSMenuItem.separatorItem())
-                let toggleColorHeighlightMenuItem = NSMenuItem.init(title: "Show Colors Under Caret", action: "toggleColorHeighlightingEnabled", keyEquivalent: "")
-                toggleColorHeighlightMenuItem.target = self
-                submenu.addItem(toggleColorHeighlightMenuItem)
-                let colorInsertionModeItem = NSMenuItem.init(title: "Color Insertion Mode", action: nil, keyEquivalent: "")
-                let colorInsertionModeNSItem = NSMenuItem.init(title: "NSColor", action: "selectNSColorInsertionMode:", keyEquivalent: "")
-                colorInsertionModeNSItem.target = self
-                colorInsertionModeItem.target = self
-                let colorInsertionModeUIItem = NSMenuItem.init(title: "UIColor", action: "selectUIColorInsertionMode:", keyEquivalent: "")
-                colorInsertionModeUIItem.target = self
-                
-                let colorInsertionModeMenu = NSMenu.init(title: "Color Insertion Mode")
-                colorInsertionModeItem.submenu = colorInsertionModeMenu
-                colorInsertionModeItem.submenu!.addItem(colorInsertionModeUIItem)
-                colorInsertionModeItem.submenu!.addItem(colorInsertionModeNSItem)
-                submenu.addItem(colorInsertionModeItem)
-                
-                let insertColorMenuItem = NSMenuItem.init(title: "Insert Color...", action: "insertColor:", keyEquivalent: "")
-                insertColorMenuItem.target = self
-                submenu.addItem(insertColorMenuItem)
+            submenu.addItem(NSMenuItem.separatorItem())
+            //let toggleColorHeighlightMenuItem = NSMenuItem.init(title: "Show Colors Under Caret", action: #selector(toggleColorHeighlightingEnabled), keyEquivalent: "")
+            //toggleColorHeighlightMenuItem.target = self
+            //submenu.addItem(toggleColorHeighlightMenuItem)
+            let colorInsertionModeItem = NSMenuItem.init(title: "Color Insertion Mode", action: nil, keyEquivalent: "")
+            let colorInsertionModeNSItem = NSMenuItem.init(title: "NSColor", action: #selector(selectNSColorInsertionMode(_:)), keyEquivalent: "")
+            colorInsertionModeNSItem.target = self
+            colorInsertionModeItem.target = self
+            let colorInsertionModeUIItem = NSMenuItem.init(title: "UIColor", action: #selector(selectUIColorInsertionMode(_:)), keyEquivalent: "")
+            colorInsertionModeUIItem.target = self
+            
+            let colorInsertionModeMenu = NSMenu.init(title: "Color Insertion Mode")
+            colorInsertionModeItem.submenu = colorInsertionModeMenu
+            colorInsertionModeItem.submenu!.addItem(colorInsertionModeUIItem)
+            colorInsertionModeItem.submenu!.addItem(colorInsertionModeNSItem)
+            submenu.addItem(colorInsertionModeItem)
+            
+            let insertColorMenuItem = NSMenuItem.init(title: "Insert Color...", action: #selector(insertColor(_:)), keyEquivalent: "")
+            insertColorMenuItem.target = self
+            submenu.addItem(insertColorMenuItem)
         }
     }
     
@@ -191,7 +191,7 @@ class SWCMainController : NSObject {
     }
     
     func activateColorHighlighting() {
-        notificationCenter.addObserver(self, selector: "selectionDidChange:", name: NSTextViewDidChangeSelectionNotification, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(selectionDidChange(_:)), name: NSTextViewDidChangeSelectionNotification, object: nil)
         let notification = NSNotification.init(name: NSTextViewDidChangeSelectionNotification, object: nil)
         self.selectionDidChange(notification)
     }
@@ -222,7 +222,7 @@ class SWCMainController : NSObject {
             textView.insertText("NSColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1.0)", replacementRange:range)
         }
         textView.undoManager?.endUndoGrouping()
-        self.performSelector("activateColorWell", withObject: nil, afterDelay: 0.0)
+        self.performSelector(#selector(activateColorWell), withObject: nil, afterDelay: 0.0)
     }
     
     func activateColorWell() {
@@ -453,24 +453,26 @@ class SWCMainController : NSObject {
         return nil
     }
     
-    func dividedValue(var value: Double, divisorRange: NSRange, inString text: NSString) -> Double {
+    func dividedValue(value: Double, divisorRange: NSRange, inString text: NSString) -> Double {
+        var val = value;
         if divisorRange.location != NSNotFound {
             let divisor = Double(text.substringWithRange(divisorRange).stringByTrimmingCharactersInSet(NSCharacterSet.init(charactersInString: "/ ")))!
             if divisor != 0 {
-                value /= divisor
+                val /= divisor
             }
         }
-        return value
+        return val
     }
     
-    func colorStringForColor(var color: NSColor, colorType: SWCColorType) -> NSString? {
+    func colorStringForColor(color: NSColor, colorType: SWCColorType) -> NSString? {
+        var col = color;
         var colorString : NSString? = nil
         var c = SWC_RGBA(r: -1, g: -1, b: -1, a: -1)
-        color = color.colorUsingColorSpace(NSColorSpace.genericRGBColorSpace())!
-        color.getRed(&c.r, green: &c.g, blue: &c.b, alpha: &c.a)
+        col = col.colorUsingColorSpace(NSColorSpace.genericRGBColorSpace())!
+        col.getRed(&c.r, green: &c.g, blue: &c.b, alpha: &c.a)
         if c.r >= 0 {
             for (colorName, constantColor) in self.constantColorsByName {
-                if constantColor == color {
+                if constantColor == col {
                     if SWCColorType.isNSColor(colorType) {
                         colorString = NSString(format: "NSColor.%@Color()", colorName)
                     }
