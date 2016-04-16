@@ -35,6 +35,9 @@ enum SWCColorType : Int, Comparable {
     case UIWhite                  //UIColor(white:0.5, alpha:1.0)
     case UIWhiteInit              //UIColor.init(white:0.5, alpha:1.0)
     case UIConstant               //UIColor.redColor()
+    case UIRGBA_OBJC              //[UIColor colorWithRed:1.0 green:0.0 blue:0.0 alpha:1.0]
+    case UIWhite_OBJC             //[UIColor colorWithWhite:0.5 alpha:1.0]
+    case UIConstant_OBJC          //[UIColor redColor]
     // Mac OS X
     case NSRGBA                   //NSColor(red:1.0, green:0.0, blue:0.0, alpha:1.0)
     case NSRGBAInit               //NSColor.init(red:1.0, green:0.0, blue:0.0, alpha:1.0)
@@ -49,6 +52,14 @@ enum SWCColorType : Int, Comparable {
     case NSWhiteCalibrated        //NSColor(calibratedWhite:0.5, alpha:1.0)
     case NSWhiteCalibratedInit    //NSColor.init(calibratedWhite:0.5, alpha:1.0)
     case NSConstant               //NSColor.redColor()
+    case NSRGBA_OBJC              //[NSColor colorWithRed:1.0 green:0.0 blue:0.0 alpha:1.0]
+    case NSRGBADevice_OBJC        //[NSColor colorWithDeviceRed:1.0 green:0.0 blue:0.0 alpha:1.0]
+    case NSRGBACalibrated_OBJC    //[NSColor colorWithCalibratedRed:1.0 green:0.0 blue:0.0 alpha:1.0]
+    case NSWhite_OBJC             //[NSColor colorWithWhite:0.5 alpha:1.0]
+    case NSWhiteDevice_OBJC       //[NSColor colorWithDeviceWhite:0.5 alpha:1.0]
+    case NSWhiteCalibrated_OBJC   //[NSColor colorWithCalibratedWhite:0.5 alpha:1.0]
+    case NSConstant_OBJC          //[NSColor redColor]
+    // ObjC
     static func isNSColor(colorType: SWCColorType) -> Bool {
         return colorType >= .NSRGBA
     }
@@ -62,10 +73,10 @@ class SWCMainController : NSObject {
     let colorWell = SWCPlainColorWell.init(frame: NSMakeRect(0, 0, 50, 30))
     var colorFrameView = SWCColorFrameView.init(frame: NSZeroRect)
     var textView: NSTextView? {
-            if let fr = NSApp.keyWindow?.firstResponder as? NSTextView {
-                return fr
-            }
-            return nil
+        if let fr = NSApp.keyWindow?.firstResponder as? NSTextView {
+            return fr
+        }
+        return nil
     }
     var selectedColorType = SWCColorType.None
     var selectedColorRange = NSMakeRange(NSNotFound, 0)
@@ -88,11 +99,18 @@ class SWCMainController : NSObject {
         "clear"     : NSColor.clearColor()
     ]
     
+    // swift
     let rgbaUIColorRegex = try! NSRegularExpression.init(pattern: "UIColor(\\.init)?\\(\\s*red\\s*\\:\\s*([0-9]*\\.?[0-9]*)\\s*(\\/\\s*[0-9]*\\.?[0-9]*)?\\s*\\,\\s*green\\s*\\:\\s*([0-9]*\\.?[0-9]*)\\s*(\\/\\s*[0-9]*\\.?[0-9]*)?\\s*\\,\\s*blue\\s*\\:\\s*([0-9]*\\.?[0-9]*)\\s*(\\/\\s*[0-9]*\\.?[0-9]*)?\\s*\\,\\s*alpha\\s*\\:\\s*([0-9]*\\.?[0-9]*)\\s*(\\/\\s*[0-9]*\\.?[0-9]*)?\\s*\\)", options: NSRegularExpressionOptions.init(rawValue: 0))
     let whiteUIColorRegex = try! NSRegularExpression.init(pattern: "UIColor(\\.init)?\\(\\s*white\\s*\\:\\s*([0-9]*\\.?[0-9]*)\\s*(\\/\\s*[0-9]*\\.?[0-9]*)?\\s*\\,\\s*alpha\\s*\\:\\s*([0-9]*\\.?[0-9]*)\\s*(\\/\\s*[0-9]*\\.?[0-9]*)?\\s*\\)", options: NSRegularExpressionOptions.init(rawValue: 0))
     let rgbaNSColorRegex = try! NSRegularExpression.init(pattern: "NSColor(\\.init)?\\(\\s*(calibrated|device)?[rR]ed\\s*\\:\\s*([0-9]*\\.?[0-9]*)\\s*(\\/\\s*[0-9]*\\.?[0-9]*)?\\s*\\,\\s*green\\s*\\:\\s*([0-9]*\\.?[0-9]*)\\s*(\\/\\s*[0-9]*\\.?[0-9]*)?\\s*\\,\\s*blue\\s*\\:\\s*([0-9]*\\.?[0-9]*)\\s*(\\/\\s*[0-9]*\\.?[0-9]*)?\\s*\\,\\s*alpha\\s*\\:\\s*([0-9]*\\.?[0-9]*)\\s*(\\/\\s*[0-9]*\\.?[0-9]*)?\\s*\\)", options: NSRegularExpressionOptions.init(rawValue: 0))
     let whiteNSColorRegex = try! NSRegularExpression.init(pattern: "NSColor(\\.init)?\\(\\s*(calibrated|device)?[wW]hite\\s*\\:\\s*([0-9]*\\.?[0-9]*)\\s*(\\/\\s*[0-9]*\\.?[0-9]*)?\\s*\\,\\s*alpha\\s*\\:\\s*([0-9]*\\.?[0-9]*)\\s*(\\/\\s*[0-9]*\\.?[0-9]*)?\\s*\\)", options: NSRegularExpressionOptions.init(rawValue: 0))
     let constantColorRegex = try! NSRegularExpression.init(pattern: "(UI|NS)Color\\.(black|darkGray|lightGray|white|gray|red|green|blue|cyan|yellow|magenta|orange|purple|brown|clear)Color\\(\\s*\\)", options: NSRegularExpressionOptions.init(rawValue: 0))
+    // objc
+    let objc_rgbaUIColorRegex = try! NSRegularExpression.init(pattern: "(\\[\\s*UIColor\\s+colorWith|\\[\\s*\\[\\s*UIColor\\s+alloc\\]\\s*initWith)Red:\\s*([0-9]*\\.?[0-9]*f?)\\s*(\\/\\s*[0-9]*\\.?[0-9]*f?)?\\s+green:\\s*([0-9]*\\.?[0-9]*f?)\\s*(\\/\\s*[0-9]*\\.?[0-9]*f?)?\\s+blue:\\s*([0-9]*\\.?[0-9]*f?)\\s*(\\/\\s*[0-9]*\\.?[0-9]*f?)?\\s*alpha:\\s*([0-9]*\\.?[0-9]*f?)\\s*(\\/\\s*[0-9]*\\.?[0-9]*f?)?\\s*\\]", options: NSRegularExpressionOptions.init(rawValue: 0))
+    let objc_whiteUIColorRegex = try! NSRegularExpression.init(pattern: "(\\[\\s*UIColor\\s+colorWith|\\[\\s*\\[\\s*UIColor\\s+alloc\\]\\s*initWith)White:\\s*([0-9]*\\.?[0-9]*f?)\\s*(\\/\\s*[0-9]*\\.?[0-9]*f?)?\\s+alpha:\\s*([0-9]*\\.?[0-9]*f?)\\s*(\\/\\s*[0-9]*\\.?[0-9]*f?)?\\s*\\]", options: NSRegularExpressionOptions.init(rawValue: 0))
+    let objc_rgbaNSColorRegex = try! NSRegularExpression.init(pattern: "\\[\\s*NSColor\\s+colorWith(Calibrated|Device)?Red:\\s*([0-9]*\\.?[0-9]*f?)\\s*(\\/\\s*[0-9]*\\.?[0-9]*f?)?\\s+green:\\s*([0-9]*\\.?[0-9]*f?)\\s*(\\/\\s*[0-9]*\\.?[0-9]*f?)?\\s+blue:\\s*([0-9]*\\.?[0-9]*f?)\\s*(\\/\\s*[0-9]*\\.?[0-9]*f?)?\\s+alpha:\\s*([0-9]*\\.?[0-9]*f?)\\s*(\\/\\s*[0-9]*\\.?[0-9]*f?)?\\s*\\]", options: NSRegularExpressionOptions.init(rawValue: 0))
+    let objc_whiteNSColorRegex = try! NSRegularExpression.init(pattern: "\\[\\s*NSColor\\s+colorWith(Calibrated|Device)?White:\\s*([0-9]*\\.?[0-9]*f?)\\s*(\\/\\s*[0-9]*\\.?[0-9]*f?)?\\s+alpha:\\s*([0-9]*\\.?[0-9]*f?)\\s*(\\/\\s*[0-9]*\\.?[0-9]*f?)?\\s*\\]", options: NSRegularExpressionOptions.init(rawValue: 0))
+    let objc_constantColorRegex = try! NSRegularExpression.init(pattern: "\\[\\s*(UI|NS)Color\\s+(black|darkGray|lightGray|white|gray|red|green|blue|cyan|yellow|magenta|orange|purple|brown|clear)Color\\s*\\]", options: NSRegularExpressionOptions.init(rawValue: 0))
     
     static let sharedInstance : SWCMainController = {
         let instance = SWCMainController.init()
@@ -444,6 +462,106 @@ class SWCMainController : NSObject {
             }
         }
         
+        if foundColor == nil {
+            self.colorCodeMatch(string, rx: self.objc_rgbaUIColorRegex, selectedRange: selectedRange) { [unowned self] (result, colorRange, stop) in
+                var red = Double(text.substringWithRange(result.rangeAtIndex(2)))
+                red = self.dividedValue(red!, divisorRange: result.rangeAtIndex(3), inString: text)
+                var green = Double(text.substringWithRange(result.rangeAtIndex(4)))
+                green = self.dividedValue(green!, divisorRange: result.rangeAtIndex(5), inString: text)
+                var blue = Double(text.substringWithRange(result.rangeAtIndex(6)))
+                blue = self.dividedValue(blue!, divisorRange: result.rangeAtIndex(7), inString: text)
+                var alpha = Double(text.substringWithRange(result.rangeAtIndex(8)))
+                alpha = self.dividedValue(alpha!, divisorRange: result.rangeAtIndex(9), inString: text)
+                let c = SWC_RGBA.init(r: red!, g: green!, b: blue!, a: alpha!)
+                foundColor = NSColor.init(red: c.r, green: c.g, blue: c.b, alpha: c.a)
+                foundColorType = .UIRGBA_OBJC
+                foundColorRange = colorRange
+                stop.memory = true
+            }
+        }
+        
+        if foundColor == nil {
+            self.colorCodeMatch(string, rx: self.objc_rgbaNSColorRegex, selectedRange: selectedRange) { [unowned self] (result, colorRange, stop) in
+                var red = Double(text.substringWithRange(result.rangeAtIndex(2)))
+                red = self.dividedValue(red!, divisorRange: result.rangeAtIndex(3), inString: text)
+                var green = Double(text.substringWithRange(result.rangeAtIndex(4)))
+                green = self.dividedValue(green!, divisorRange: result.rangeAtIndex(5), inString: text)
+                var blue = Double(text.substringWithRange(result.rangeAtIndex(6)))
+                blue = self.dividedValue(blue!, divisorRange: result.rangeAtIndex(7), inString: text)
+                var alpha = Double(text.substringWithRange(result.rangeAtIndex(8)))
+                alpha = self.dividedValue(alpha!, divisorRange: result.rangeAtIndex(9), inString: text)
+                let c = SWC_RGBA.init(r: red!, g: green!, b: blue!, a: alpha!)
+                foundColor = NSColor.init(red: c.r, green: c.g, blue: c.b, alpha: c.a)
+                let prefixRange = result.rangeAtIndex(1)
+                if prefixRange.location == NSNotFound {
+                    foundColorType = .NSRGBA_OBJC
+                }
+                else {
+                    let prefixString = text.substringWithRange(result.rangeAtIndex(1))
+                    if prefixString.hasPrefix("Calibrated") {
+                        foundColorType = .NSRGBACalibrated_OBJC
+                    }
+                    else if prefixString.hasPrefix("Device") {
+                        foundColorType = .NSRGBADevice_OBJC
+                    }
+                }
+                
+                foundColorRange = colorRange
+                stop.memory = true
+            }
+        }
+        
+        if foundColor == nil {
+            self.colorCodeMatch(string, rx: self.objc_whiteUIColorRegex, selectedRange: selectedRange) { [unowned self] (result, colorRange, stop) in
+                var white = Double(text.substringWithRange(result.rangeAtIndex(2)))
+                white = self.dividedValue(white!, divisorRange: result.rangeAtIndex(3), inString: text)
+                var alpha = Double(text.substringWithRange(result.rangeAtIndex(4)))
+                alpha = self.dividedValue(alpha!, divisorRange: result.rangeAtIndex(5), inString: text)
+                foundColor = NSColor(white: CGFloat(white!), alpha: CGFloat(alpha!))
+                foundColorType = .UIWhite_OBJC
+                foundColorRange = colorRange
+                stop.memory = true
+            }
+        }
+        
+        if foundColor == nil {
+            self.colorCodeMatch(string, rx: self.objc_whiteNSColorRegex, selectedRange: selectedRange) { [unowned self] (result, colorRange, stop) in
+                var white = Double(text.substringWithRange(result.rangeAtIndex(2)))
+                white = self.dividedValue(white!, divisorRange: result.rangeAtIndex(3), inString: text)
+                var alpha = Double(text.substringWithRange(result.rangeAtIndex(4)))
+                alpha = self.dividedValue(alpha!, divisorRange: result.rangeAtIndex(5), inString: text)
+                foundColor = NSColor(white: CGFloat(white!), alpha: CGFloat(alpha!))
+                let prefixRange = result.rangeAtIndex(1)
+                if prefixRange.location == NSNotFound {
+                    foundColorType = .NSWhite_OBJC
+                }
+                else {
+                    let prefixString = text.substringWithRange(result.rangeAtIndex(1))
+                    if prefixString.hasPrefix("Calibrated") {
+                        foundColorType = .NSWhiteCalibrated_OBJC
+                    }
+                    else if prefixString.hasPrefix("Device") {
+                        foundColorType = .NSWhiteDevice_OBJC
+                    }
+                }
+                foundColorRange = colorRange
+                stop.memory = true
+            }
+        }
+        
+        if foundColor == nil {
+            self.colorCodeMatch(string, rx: self.objc_constantColorRegex, selectedRange: selectedRange) { [unowned self] (result, colorRange, stop) -> () in
+                let NS_UI = text.substringWithRange(result.rangeAtIndex(1))
+                let colorName = text.substringWithRange(result.rangeAtIndex(2))
+                foundColor = self.constantColorsByName[colorName]
+                foundColorRange = colorRange
+                foundColorType = NS_UI.hasPrefix("UI") ? .UIConstant_OBJC : .NSConstant_OBJC
+                stop.memory = true
+            }
+        }
+        
+        
+        
         if foundColor != nil {
             matchedRange = foundColorRange
             type = foundColorType
@@ -493,13 +611,13 @@ class SWCMainController : NSObject {
                 case .UIRGBAInit, .UIWhiteInit:
                     colorString = NSString(format:
                         "UIColor.init(white: %.3f, alpha: %.3f)", c.r, c.a)
-                case .NSConstant, .NSRGBA, .NSWhite:
+                case .NSRGBA, .NSWhite:
                     colorString = NSString(format:
                         "NSColor(white: %.3f, alpha: %.3f)", c.r, c.a)
                 case .NSRGBAInit, .NSWhiteInit:
                     colorString = NSString(format:
                         "NSColor.init(white: %.3f, alpha: %.3f)", c.r, c.a)
-                case .NSRGBACalibrated, .NSWhiteCalibrated:
+                case .NSRGBACalibrated, .NSWhiteCalibrated, .NSConstant:
                     colorString = NSString(format:
                         "NSColor(calibratedWhite: %.3f, alpha: %.3f)", c.r, c.a)
                 case .NSRGBACalibratedInit, .NSWhiteCalibratedInit:
@@ -511,6 +629,18 @@ class SWCMainController : NSObject {
                 case .NSRGBADeviceInit, .NSWhiteDeviceInit:
                     colorString = NSString(format:
                         "NSColor.init(deviceWhite: %.3f, alpha: %.3f)", c.r, c.a)
+                case .UIRGBA_OBJC, .UIConstant_OBJC:
+                    colorString = NSString(format:
+                        "[UIColor colorWithWhite:%.3f alpha:%.3f]", c.r, c.a)
+                case .NSRGBA_OBJC:
+                    colorString = NSString(format:
+                        "[NSColor colorWithWhite:%.3f alpha:%.3f]", c.r, c.a)
+                case .NSRGBACalibrated_OBJC, .NSConstant_OBJC:
+                    colorString = NSString(format:
+                        "[NSColor colorWithCalibratedWhite:%.3f alpha:%.3f]", c.r, c.a)
+                case .NSRGBADevice_OBJC:
+                    colorString = NSString(format:
+                        "[NSColor colorWithDeviceWhite:%.3f alpha:%.3f]", c.r, c.a)
                 default: break
                 }
             }
@@ -522,7 +652,7 @@ class SWCMainController : NSObject {
                 case .UIRGBAInit, .UIWhiteInit:
                     colorString = NSString(format:
                         "UIColor.init(red: %.3f, green: %.3f, blue: %.3f, alpha: %.3f)", c.r, c.g, c.b, c.a)
-                case .NSConstant, .NSRGBA, .NSWhite:
+                case .NSRGBA, .NSWhite:
                     colorString = NSString(format:
                         "NSColor(red: %.3f, green: %.3f, blue: %.3f, alpha: %.3f)", c.r, c.g, c.b, c.a)
                 case .NSRGBAInit, .NSWhiteInit:
@@ -531,7 +661,7 @@ class SWCMainController : NSObject {
                 case .NSRGBACalibrated, .NSWhiteCalibrated:
                     colorString = NSString(format:
                         "NSColor(calibratedRed: %.3f, green: %.3f, blue: %.3f, alpha: %.3f)", c.r, c.g, c.b, c.a)
-                case .NSRGBACalibratedInit, .NSWhiteCalibratedInit:
+                case .NSRGBACalibratedInit, .NSWhiteCalibratedInit, .NSConstant:
                     colorString = NSString(format:
                         "NSColor.init(calibratedRed: %.3f, green: %.3f, blue: %.3f, alpha: %.3f)", c.r, c.g, c.b, c.a)
                 case .NSRGBADevice, .NSWhiteDevice:
@@ -540,6 +670,18 @@ class SWCMainController : NSObject {
                 case .NSRGBADeviceInit, .NSWhiteDeviceInit:
                     colorString = NSString(format:
                         "NSColor.init(deviceRed: %.3f, green: %.3f, blue: %.3f, alpha: %.3f)", c.r, c.g, c.b, c.a)
+                case .UIRGBA_OBJC, .UIConstant_OBJC:
+                    colorString = NSString(format:
+                        "[UIColor colorWithRed:%.3f green:%.3f blue:%.3f alpha:%.3f]", c.r, c.g, c.b, c.a)
+                case .NSRGBA_OBJC:
+                    colorString = NSString(format:
+                        "[NSColor colorWithRed:%.3f green:%.3f blue:%.3f alpha:%.3f]", c.r, c.g, c.b, c.a)
+                case .NSRGBACalibrated_OBJC, .NSConstant_OBJC:
+                    colorString = NSString(format:
+                        "[NSColor colorWithCalibratedRed:%.3f green:%.3f blue:%.3f alpha:%.3f]", c.r, c.g, c.b, c.a)
+                case .NSRGBADevice_OBJC:
+                    colorString = NSString(format:
+                        "[NSColor colorWithDeviceRed:%.3f green:%.3f blue:%.3f alpha:%.3f]", c.r, c.g, c.b, c.a)
                 default: break
                 }
             }
