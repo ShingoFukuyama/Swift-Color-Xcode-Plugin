@@ -628,17 +628,17 @@ class SWCMainController : NSObject {
                         "NSColor(deviceWhite: %.3f, alpha: %.3f)", c.r, c.a)
                 case .NSRGBADeviceInit, .NSWhiteDeviceInit:
                     colorString = NSString(format:
-                        "NSColor.init(deviceWhite: %.3f, alpha: %.3f)", c.r, c.a)
-                case .UIRGBA_OBJC, .UIConstant_OBJC:
+                                           "NSColor.init(deviceWhite: %.3f, alpha: %.3f)", c.r, c.a)
+                case .UIRGBA_OBJC, .UIWhite_OBJC, .UIConstant_OBJC:
                     colorString = NSString(format:
                         "[UIColor colorWithWhite:%.3f alpha:%.3f]", c.r, c.a)
-                case .NSRGBA_OBJC:
+                case .NSRGBA_OBJC, .NSWhite_OBJC:
                     colorString = NSString(format:
-                        "[NSColor colorWithWhite:%.3f alpha:%.3f]", c.r, c.a)
-                case .NSRGBACalibrated_OBJC, .NSConstant_OBJC:
+                                           "[NSColor colorWithWhite:%.3f alpha:%.3f]", c.r, c.a)
+                case .NSRGBACalibrated_OBJC, .NSWhiteCalibrated_OBJC, .NSConstant_OBJC:
                     colorString = NSString(format:
                         "[NSColor colorWithCalibratedWhite:%.3f alpha:%.3f]", c.r, c.a)
-                case .NSRGBADevice_OBJC:
+                case .NSRGBADevice_OBJC, .NSWhiteDevice_OBJC:
                     colorString = NSString(format:
                         "[NSColor colorWithDeviceWhite:%.3f alpha:%.3f]", c.r, c.a)
                 default: break
@@ -670,16 +670,16 @@ class SWCMainController : NSObject {
                 case .NSRGBADeviceInit, .NSWhiteDeviceInit:
                     colorString = NSString(format:
                         "NSColor.init(deviceRed: %.3f, green: %.3f, blue: %.3f, alpha: %.3f)", c.r, c.g, c.b, c.a)
-                case .UIRGBA_OBJC, .UIConstant_OBJC:
+                case .UIRGBA_OBJC, .UIWhite_OBJC, .UIConstant_OBJC:
                     colorString = NSString(format:
                         "[UIColor colorWithRed:%.3f green:%.3f blue:%.3f alpha:%.3f]", c.r, c.g, c.b, c.a)
-                case .NSRGBA_OBJC:
+                case .NSRGBA_OBJC, .NSWhite_OBJC:
                     colorString = NSString(format:
                         "[NSColor colorWithRed:%.3f green:%.3f blue:%.3f alpha:%.3f]", c.r, c.g, c.b, c.a)
-                case .NSRGBACalibrated_OBJC, .NSConstant_OBJC:
+                case .NSRGBACalibrated_OBJC, .NSWhiteCalibrated_OBJC, .NSConstant_OBJC:
                     colorString = NSString(format:
                         "[NSColor colorWithCalibratedRed:%.3f green:%.3f blue:%.3f alpha:%.3f]", c.r, c.g, c.b, c.a)
-                case .NSRGBADevice_OBJC:
+                case .NSRGBADevice_OBJC, .NSWhiteDevice_OBJC:
                     colorString = NSString(format:
                         "[NSColor colorWithDeviceRed:%.3f green:%.3f blue:%.3f alpha:%.3f]", c.r, c.g, c.b, c.a)
                 default: break
