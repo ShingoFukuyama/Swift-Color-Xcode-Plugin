@@ -35,7 +35,7 @@ enum SWCColorType : Int, Comparable {
     case UIWhite                  //UIColor(white:0.5, alpha:1.0)
     case UIWhiteInit              //UIColor.init(white:0.5, alpha:1.0)
     case UIConstant               //UIColor.redColor()
-    case UIRGBA_OBJC              //[UIColor colorWithRed:1.0 green:0.0 blue:0.0 alpha:1.0]
+    case UIRGBA_OBJC              //[UIColor colorWithRed:250.0/255.0f green:0.0 blue:0.0 alpha:1.0f]
     case UIWhite_OBJC             //[UIColor colorWithWhite:0.5 alpha:1.0]
     case UIConstant_OBJC          //[UIColor redColor]
     // Mac OS X
@@ -464,13 +464,13 @@ class SWCMainController : NSObject {
         
         if foundColor == nil {
             self.colorCodeMatch(string, rx: self.objc_rgbaUIColorRegex, selectedRange: selectedRange) { [unowned self] (result, colorRange, stop) in
-                var red = Double(text.substringWithRange(result.rangeAtIndex(2))) ?? 0.0
+                var red = self.convertMatchedStringToDouble(text.substringWithRange(result.rangeAtIndex(2)))
                 red = self.dividedValue(red, divisorRange: result.rangeAtIndex(3), inString: text)
-                var green = Double(text.substringWithRange(result.rangeAtIndex(4))) ?? 0.0
+                var green = self.convertMatchedStringToDouble(text.substringWithRange(result.rangeAtIndex(4)))
                 green = self.dividedValue(green, divisorRange: result.rangeAtIndex(5), inString: text)
-                var blue = Double(text.substringWithRange(result.rangeAtIndex(6))) ?? 0.0
+                var blue = self.convertMatchedStringToDouble(text.substringWithRange(result.rangeAtIndex(6)))
                 blue = self.dividedValue(blue, divisorRange: result.rangeAtIndex(7), inString: text)
-                var alpha = Double(text.substringWithRange(result.rangeAtIndex(8))) ?? 0.0
+                var alpha = self.convertMatchedStringToDouble(text.substringWithRange(result.rangeAtIndex(8)))
                 alpha = self.dividedValue(alpha, divisorRange: result.rangeAtIndex(9), inString: text)
                 let c = SWC_RGBA.init(r: red, g: green, b: blue, a: alpha)
                 foundColor = NSColor.init(red: c.r, green: c.g, blue: c.b, alpha: c.a)
@@ -482,15 +482,15 @@ class SWCMainController : NSObject {
         
         if foundColor == nil {
             self.colorCodeMatch(string, rx: self.objc_rgbaNSColorRegex, selectedRange: selectedRange) { [unowned self] (result, colorRange, stop) in
-                var red = Double(text.substringWithRange(result.rangeAtIndex(2)))
-                red = self.dividedValue(red!, divisorRange: result.rangeAtIndex(3), inString: text)
-                var green = Double(text.substringWithRange(result.rangeAtIndex(4)))
-                green = self.dividedValue(green!, divisorRange: result.rangeAtIndex(5), inString: text)
-                var blue = Double(text.substringWithRange(result.rangeAtIndex(6)))
-                blue = self.dividedValue(blue!, divisorRange: result.rangeAtIndex(7), inString: text)
-                var alpha = Double(text.substringWithRange(result.rangeAtIndex(8)))
-                alpha = self.dividedValue(alpha!, divisorRange: result.rangeAtIndex(9), inString: text)
-                let c = SWC_RGBA.init(r: red!, g: green!, b: blue!, a: alpha!)
+                var red = self.convertMatchedStringToDouble(text.substringWithRange(result.rangeAtIndex(2)))
+                red = self.dividedValue(red, divisorRange: result.rangeAtIndex(3), inString: text)
+                var green = self.convertMatchedStringToDouble(text.substringWithRange(result.rangeAtIndex(4)))
+                green = self.dividedValue(green, divisorRange: result.rangeAtIndex(5), inString: text)
+                var blue = self.convertMatchedStringToDouble(text.substringWithRange(result.rangeAtIndex(6)))
+                blue = self.dividedValue(blue, divisorRange: result.rangeAtIndex(7), inString: text)
+                var alpha = self.convertMatchedStringToDouble(text.substringWithRange(result.rangeAtIndex(8)))
+                alpha = self.dividedValue(alpha, divisorRange: result.rangeAtIndex(9), inString: text)
+                let c = SWC_RGBA.init(r: red, g: green, b: blue, a: alpha)
                 foundColor = NSColor.init(red: c.r, green: c.g, blue: c.b, alpha: c.a)
                 let prefixRange = result.rangeAtIndex(1)
                 if prefixRange.location == NSNotFound {
@@ -513,9 +513,9 @@ class SWCMainController : NSObject {
         
         if foundColor == nil {
             self.colorCodeMatch(string, rx: self.objc_whiteUIColorRegex, selectedRange: selectedRange) { [unowned self] (result, colorRange, stop) in
-                var white = Double(text.substringWithRange(result.rangeAtIndex(2))) ?? 0.0
+                var white = self.convertMatchedStringToDouble(text.substringWithRange(result.rangeAtIndex(2)))
                 white = self.dividedValue(white, divisorRange: result.rangeAtIndex(3), inString: text)
-                var alpha = Double(text.substringWithRange(result.rangeAtIndex(4))) ?? 0.0
+                var alpha = self.convertMatchedStringToDouble(text.substringWithRange(result.rangeAtIndex(4)))
                 alpha = self.dividedValue(alpha, divisorRange: result.rangeAtIndex(5), inString: text)
                 foundColor = NSColor(white: CGFloat(white), alpha: CGFloat(alpha))
                 foundColorType = .UIWhite_OBJC
@@ -526,9 +526,9 @@ class SWCMainController : NSObject {
         
         if foundColor == nil {
             self.colorCodeMatch(string, rx: self.objc_whiteNSColorRegex, selectedRange: selectedRange) { [unowned self] (result, colorRange, stop) in
-                var white = Double(text.substringWithRange(result.rangeAtIndex(2))) ?? 0.0
+                var white = self.convertMatchedStringToDouble(text.substringWithRange(result.rangeAtIndex(2)))
                 white = self.dividedValue(white, divisorRange: result.rangeAtIndex(3), inString: text)
-                var alpha = Double(text.substringWithRange(result.rangeAtIndex(4))) ?? 0.0
+                var alpha = self.convertMatchedStringToDouble(text.substringWithRange(result.rangeAtIndex(4)))
                 alpha = self.dividedValue(alpha, divisorRange: result.rangeAtIndex(5), inString: text)
                 foundColor = NSColor(white: CGFloat(white), alpha: CGFloat(alpha))
                 let prefixRange = result.rangeAtIndex(1)
@@ -571,15 +571,20 @@ class SWCMainController : NSObject {
         return nil
     }
     
+    func convertMatchedStringToDouble(value: String?) -> Double {
+        guard let string = value else {
+            return 0
+        }
+        let trimmed = string.stringByTrimmingCharactersInSet(NSCharacterSet.init(charactersInString: "/ f"))
+        return Double(trimmed) ?? 0
+    }
+    
     func dividedValue(value: Double, divisorRange: NSRange, inString text: NSString) -> Double {
         var val = value;
         if divisorRange.location != NSNotFound {
-            let trimmed = text.substringWithRange(divisorRange).stringByTrimmingCharactersInSet(NSCharacterSet.init(charactersInString: "/ f"))
-            if trimmed.characters.count > 0 {
-                let divisor = Double(trimmed)!
-                if divisor != 0.0 {
-                    val /= divisor
-                }
+            let divisor = self.convertMatchedStringToDouble(text.substringWithRange(divisorRange))
+            if divisor != 0.0 {
+                val /= divisor
             }
         }
         return val
